@@ -1,67 +1,22 @@
-import * as dotenv from "dotenv";
-
-import { HardhatUserConfig, task } from "hardhat/config";
+import "dotenv/config";
+import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import { BigNumber } from "ethers";
+// eslint-disable-next-line node/no-missing-import
+import "./tasks";
 
-dotenv.config();
-
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-
-task("seedphrase", "Creates a new seedphrase", async (taskArgs, hre) => {
-  console.log(hre.ethers.Wallet.createRandom().mnemonic);
-});
-
-task("send", "Sends balance to other wallet")
-  .addPositionalParam("to", "Address to send to")
-  .addOptionalPositionalParam("amount", "Amount to send")
-  .setAction(async (taskArgs, hre) => {
-    const { to, amount } = taskArgs;
-    const [signer] = await hre.ethers.getSigners();
-    let value = await signer.getBalance();
-
-    if (amount) {
-      value = BigNumber.from(hre.ethers.utils.parseEther(amount));
-    }
-
-    const gas = await signer.estimateGas({ to, value });
-    const gasPrice = await signer.getGasPrice();
-    value = value.sub(gasPrice.mul(gas));
-
-    const tx = await signer.sendTransaction({
-      to,
-      value,
-    });
-
-    console.log("Nonce: ", tx.nonce);
-    console.log("Txn: ", `https://testnet.snowtrace.io/tx/${tx.hash}`);
-    await tx.wait();
-  });
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
+const accounts = {
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
+};
 
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
-      {
-        version: "0.5.16",
-      },
-      {
-        version: "0.6.12",
-      },
       {
         version: "0.7.5",
       },
@@ -73,18 +28,17 @@ const config: HardhatUserConfig = {
   networks: {
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      accounts,
     },
     fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
       chainId: 43113,
-      accounts: { mnemonic: process.env.MNEMONIC || "" },
+      accounts,
     },
     avalancheMainnet: {
       url: "https://api.avax.network/ext/bc/C/rpc",
       chainId: 43114,
-      accounts: { mnemonic: process.env.MNEMONIC || "" },
+      accounts,
     },
   },
   gasReporter: {
