@@ -1,17 +1,10 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { ethers } from "hardhat";
-// eslint-disable-next-line node/no-missing-import
 import { LPFortBondDepository } from "../typechain";
+
+import { getGasPrice } from "./utils";
 
 const lpFortBondDepositoryAddress =
   "0x57295798BeF860832f3546E1dAD66554d7F590C1";
-
-const getGasPrice = async (provider: JsonRpcProvider) => {
-  const GAS = "5";
-  const gasPrice = await provider.getGasPrice();
-  const convertGas = ethers.utils.parseUnits(GAS, "gwei");
-  return gasPrice.add(convertGas);
-};
 
 const logBondPrice = async (
   bondingContract: LPFortBondDepository,
