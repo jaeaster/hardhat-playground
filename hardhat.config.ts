@@ -26,6 +26,13 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
+    hardhat: {
+      forking: {
+        enabled: true,
+        url: "https://api.avax.network/ext/bc/C/rpc",
+        blockNumber: 7856531,
+      },
+    },
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
       accounts,

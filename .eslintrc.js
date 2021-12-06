@@ -10,7 +10,7 @@ module.exports = {
       extensions: [".js", ".jsx", ".ts", ".tsx"],
     },
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["prettier", "@typescript-eslint"],
   extends: [
     "standard",
     "plugin:prettier/recommended",
